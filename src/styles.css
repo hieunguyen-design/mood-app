@@ -1,0 +1,135 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+:root {
+  --primary-color: black;
+}
+#app {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 2.5rem;
+  background-size: auto;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  transition: background 0.5s ease;
+}
+#title {
+  padding-bottom: 52px;
+  font-weight: 100;
+  margin-bottom: 02rem;
+  font-size: 24px;
+  font-family: Helvetica, Arial, sans-serif;
+  color: white;
+}
+#logo {
+  width: 400px;
+  height: auto;
+  margin-bottom: -10px;
+}
+#input-location {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  width: 250px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+#input-location:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(21, 156, 228, 0.4);
+}
+
+#location-button {
+  width: 38px;
+  height: 38px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background-color: white;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M12 19.35q3.05-2.8 4.525-5.087T18 10.2q0-2.725-1.737-4.462T12 4T7.738 5.738T6 10.2q0 1.775 1.475 4.063T12 19.35m0 1.975q-.35 0-.7-.125t-.625-.375Q9.05 19.325 7.8 17.9t-2.087-2.762t-1.275-2.575T4 10.2q0-3.75 2.413-5.975T12 2t5.588 2.225T20 10.2q0 1.125-.437 2.363t-1.275 2.575T16.2 17.9t-2.875 2.925q-.275.25-.625.375t-.7.125M12 12q.825 0 1.413-.587T14 10t-.587-1.412T12 8t-1.412.588T10 10t.588 1.413T12 12'/%3E%3C/svg%3E");
+}
+#form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+#submit-button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background-color: white;
+  color: greay;
+  font-size: 16px;
+  box-shadow: none;
+  cursor: pointer;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+#submit-button:hover {
+  background-color: #007bff;
+  color: white;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+#location-button:hover {
+  background-color: #007bff;
+  color: white;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M12 19.35q3.05-2.8 4.525-5.087T18 10.2q0-2.725-1.737-4.462T12 4T7.738 5.738T6 10.2q0 1.775 1.475 4.063T12 19.35m0 1.975q-.35 0-.7-.125t-.625-.375Q9.05 19.325 7.8 17.9t-2.087-2.762t-1.275-2.575T4 10.2q0-3.75 2.413-5.975T12 2t5.588 2.225T20 10.2q0 1.125-.437 2.363t-1.275 2.575T16.2 17.9t-2.875 2.925q-.275.25-.625.375t-.7.125M12 12q.825 0 1.413-.587T14 10t-.587-1.412T12 8t-1.412.588T10 10t.588 1.413T12 12'/%3E%3C/svg%3E");
+}
+
+#container {
+  border-radius: 26px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37),
+    /* Drop shadow */ inset 0 0 10px rgba(255, 255, 255, 0.5); /* Inner shadow */
+  display: inline-flex;
+  overflow: hidden;
+  padding: 1.25rem 3.125rem;
+  border-radius: 1.625rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  min-width: 300px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Day / clear-ish skies */
+.clear,
+.clear-day,
+.partly-cloudy-day,
+.wind {
+  background: linear-gradient(180deg, #2488f8 0%, #9bddff 100%);
+}
+
+/* Grey / stormy / precipitation */
+.thunderstorm,
+.cloudy,
+.fog,
+.hail,
+.tornado,
+.rain,
+.sleet {
+  color: white;
+  background: linear-gradient(180deg, #939393 0%, #f2f2f2 100%);
+}
+
+/* Night / partly cloudy night */
+.partly-cloudy-night,
+.clear-night {
+  color: white;
+  background: linear-gradient(180deg, #2c3e50 0%, #606f71 100%);
+}
