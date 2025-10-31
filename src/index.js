@@ -24,8 +24,9 @@ document.body.innerHTML = `
 <form  id="form">
     <input type="text" id="input-location" name="input-location" required />
     <button type="button" id="location-button" alter="Get your current location"></button>
+    <input type="submit" id ="submit-button" value="Search Location"/>
 </form>
-<input type="submit" id ="submit-button" value="Search Location"/>
+
 <div id="container"></div>
 </div>
 `;
@@ -34,6 +35,7 @@ const locationButton = document.querySelector("#location-button");
 const form = document.getElementById("form");
 form.addEventListener("submit", function (e) {
   e.preventDefault();
+  console.log("Form submitted");
   const WEATHER_API_KEY = `BVURY5MXKSTGG9XUA7UWYP239`;
   let inputLocation = document.getElementById("input-location").value;
   getWeatherSearch(inputLocation.toLowerCase(), WEATHER_API_KEY);
@@ -46,7 +48,7 @@ async function getWeatherSearch(inputLocation, API_KEY) {
     // fetching data
     ///================
     const response = await fetch(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${inputLocation}?unitGroup=us&key=${API_KEY}&contentType=json`
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${inputLocation}?unitGroup=us&key=${API_KEY}&contentType=json&unitGroup=us`
     );
     const conditionData = await response.json();
     const fetchRespone = {
@@ -58,6 +60,7 @@ async function getWeatherSearch(inputLocation, API_KEY) {
       currentHumidity: conditionData.currentConditions.humidity,
       currentIcon: conditionData.currentConditions.icon,
       currentUvindex: conditionData.currentConditions.uvindex,
+      currentUnitGroup: conditionData.currentConditions.unitGroup,
     };
     let currentAddress = fetchRespone.currentAddress;
     let currentTemp = fetchRespone.currentTemp;
@@ -67,32 +70,6 @@ async function getWeatherSearch(inputLocation, API_KEY) {
     let currentHumidity = fetchRespone.currentHumidity;
     let currentIcon = fetchRespone.currentIcon;
     let currentUvindex = fetchRespone.currentUvindex;
-    ///================
-
-    ///================
-    // demo sample for Testing and Debugging
-    ///================
-
-    // const demoSample = {
-    //   currentAddress: "Fairfax",
-    //   currentTemp: 75,
-    //   currentConditions: "Clear",
-    //   currentFeelslike: 78,
-    //   currentPrecip: 20,
-    //   currentHumidity: 89.8,
-    //   currentIcon: "party-cloudy-day",
-    //   currentUvindex: 5,
-    // };
-    // let currentAddress = demoSample.currentAddress;
-    // let currentTemp = demoSample.currentTemp;
-    // let currentConditions = demoSample.currentConditions;
-    // let currentFeelslike = demoSample.currentFeelslike;
-    // let currentPrecip = demoSample.currentPrecip;
-    // let currentHumidity = demoSample.currentHumidity;
-    // let currentIcon = demoSample.currentIcon;
-    // let currentUvindex = demoSample.currentUvindex;
-
-    ///================
 
     //WEATHER DOM
     const container = document.querySelector("#container");
@@ -108,32 +85,84 @@ async function getWeatherSearch(inputLocation, API_KEY) {
 		<p id="currHumidity"></p>
 		<p id="currUvindex">
     `;
-
+    const unitToggle = document.createElement("button");
+    unitToggle.id = "unit-toggle";
+    unitToggle.textContent = "°F/°C";
+    let unitIsFahrenheit = true;
+    let currentUnitGroup = "°F";
+    unitToggle.addEventListener("click", () => {
+      if (unitIsFahrenheit) {
+        // Convert to Celsius with rounding
+        currentTemp = ((currentTemp - 32) * 5) / 9;
+        currentFeelslike = ((currentFeelslike - 32) * 5) / 9;
+        currentTemp = parseFloat(currentTemp.toFixed(2));
+        currentFeelslike = parseFloat(currentFeelslike.toFixed(2));
+        unitToggle.textContent = "°C/°F";
+        unitIsFahrenheit = false;
+      } else {
+        // Convert to Fahrenheit
+        currentTemp = (currentTemp * 9) / 5 + 32;
+        currentFeelslike = (currentFeelslike * 9) / 5 + 32;
+        currentTemp = parseFloat(currentTemp.toFixed(2));
+        currentFeelslike = parseFloat(currentFeelslike.toFixed(2));
+        unitToggle.textContent = "°F/°C";
+        unitIsFahrenheit = true;
+      }
+      // Update the displayed temperatures
+      conditions.querySelector(
+        "#currTemp"
+      ).textContent = `${currentTemp.toFixed(1)}°`;
+      conditions.querySelector(
+        "#currFeelslike"
+      ).textContent = `Feelslike: ${currentFeelslike.toFixed(1)}`;
+      currentUnitGroup = unitIsFahrenheit ? "°F" : "°C";
+      console.log(currentUnitGroup);
+      address.textContent = currentAddress.toUpperCase();
+      conditions.querySelector(
+        "#currTemp"
+      ).textContent = `${currentTemp} ${currentUnitGroup}`;
+      conditions.querySelector(
+        "#currConditions"
+      ).textContent = `${currentConditions}`;
+      conditions.querySelector(
+        "#currFeelslike"
+      ).textContent = `Feelslike: ${currentFeelslike} ${currentUnitGroup}`;
+      conditions.querySelector(
+        "#currPrecip"
+      ).textContent = `Precipitation: ${currentPrecip}`;
+      conditions.querySelector(
+        "#currHumidity"
+      ).textContent = `Humidity: ${currentHumidity}`;
+      conditions.querySelector(
+        "#currUvindex"
+      ).textContent = `UV Index: ${currentUvindex}`;
+    });
     address.textContent = currentAddress.toUpperCase();
-    conditions.querySelector("#currTemp").textContent = `${currentTemp}°`;
+    conditions.querySelector(
+      "#currTemp"
+    ).textContent = `${currentTemp} ${currentUnitGroup}`;
     conditions.querySelector(
       "#currConditions"
     ).textContent = `${currentConditions}`;
     conditions.querySelector(
       "#currFeelslike"
-    ).textContent = `Feelslike: ${currentFeelslike}`;
+    ).textContent = `Feelslike: ${currentFeelslike} ${currentUnitGroup}`;
     conditions.querySelector(
       "#currPrecip"
     ).textContent = `Precipitation: ${currentPrecip}`;
     conditions.querySelector(
       "#currHumidity"
     ).textContent = `Humidity: ${currentHumidity}`;
-    // conditions.querySelector("#currIcon").textContent = `${currentIcon}`;
     conditions.querySelector(
       "#currUvindex"
     ).textContent = `UV Index: ${currentUvindex}`;
 
-    container.append(address, conditions);
+    container.append(address, conditions, unitToggle);
     document.body.appendChild(app);
     app.appendChild(container);
 
     //Weather Dynamic background and Icon load
-    console.log(currentIcon);
+    // console.log(currentIcon);
     generateBackground(currentIcon);
     loadIcon(currentIcon);
   } catch (error) {
@@ -181,7 +210,7 @@ locationButton.addEventListener("click", () => {
 async function getWeatherCurrent(latitude, longitude, API_KEY) {
   try {
     const response = await fetch(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${latitude}%2C${longitude}?unitGroup=us&key=${API_KEY}&contentType=json`
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${latitude}%2C${longitude}?unitGroup=us&key=${API_KEY}&contentType=json&unitGroup=us`
     );
     const conditionData = await response.json();
     const fetchRespone = {
@@ -202,14 +231,7 @@ async function getWeatherCurrent(latitude, longitude, API_KEY) {
     let currentIcon = fetchRespone.currentIcon;
     let currentUvindex = fetchRespone.currentUvindex;
 
-    //GET CITY NAME USING GOOGLE API
-    const GOOGLE_API_KEY = `AIzaSyAgXBa8jVijJNl7eV8W8CUXBnneP_6xvi0`;
-    let cityName = await getCityName(latitude, longitude, GOOGLE_API_KEY);
-    if (!cityName) {
-      console.log("Cannot fetch city name.");
-    }
-    console.log(cityName);
-
+    let cityName = "Your Current Location";
     //WEATHER DOM
     const container = document.querySelector("#container");
     container.innerHTML = ``;
@@ -224,26 +246,60 @@ async function getWeatherCurrent(latitude, longitude, API_KEY) {
 		<p id="currHumidity"></p>
 		<p id="currUvindex">
     `;
+    const unitToggle = document.createElement("button");
+    unitToggle.id = "unit-toggle";
+    unitToggle.textContent = "°F/°C";
+    let unitIsFahrenheit = true;
+    let currentUnitGroup = "°F";
+    unitToggle.addEventListener("click", () => {
+      if (unitIsFahrenheit) {
+        // Convert to Celsius
+        currentTemp = ((currentTemp - 32) * 5) / 9;
+        currentFeelslike = ((currentFeelslike - 32) * 5) / 9;
+        currentTemp = parseFloat(currentTemp.toFixed(2));
+        currentFeelslike = parseFloat(currentFeelslike.toFixed(2));
+        unitToggle.textContent = "°C/°F";
+        unitIsFahrenheit = false;
+      } else {
+        // Convert to Fahrenheit
+        currentTemp = (currentTemp * 9) / 5 + 32;
+        currentFeelslike = (currentFeelslike * 9) / 5 + 32;
+        currentTemp = parseFloat(currentTemp.toFixed(2));
+        currentFeelslike = parseFloat(currentFeelslike.toFixed(2));
+        unitToggle.textContent = "°F/°C";
+        unitIsFahrenheit = true;
+      }
+      // Update the displayed temperatures
+      conditions.querySelector(
+        "#currTemp"
+      ).textContent = `${currentTemp.toFixed(1)}°`;
+      conditions.querySelector(
+        "#currFeelslike"
+      ).textContent = `Feelslike: ${currentFeelslike.toFixed(1)}`;
+      currentUnitGroup = unitIsFahrenheit ? "°F" : "°C";
+      console.log(currentUnitGroup);
+    });
     address.textContent = cityName.toUpperCase();
-    conditions.querySelector("#currTemp").textContent = `${currentTemp}°`;
+    conditions.querySelector(
+      "#currTemp"
+    ).textContent = `${currentTemp} ${currentUnitGroup}`;
     conditions.querySelector(
       "#currConditions"
     ).textContent = `${currentConditions}`;
     conditions.querySelector(
       "#currFeelslike"
-    ).textContent = `Feelslike: ${currentFeelslike}`;
+    ).textContent = `Feelslike: ${currentFeelslike}${currentUnitGroup}`;
     conditions.querySelector(
       "#currPrecip"
     ).textContent = `Precipitation: ${currentPrecip}`;
     conditions.querySelector(
       "#currHumidity"
     ).textContent = `Humidity: ${currentHumidity}`;
-    // conditions.querySelector("#currIcon").textContent = `${currentIcon}`;
     conditions.querySelector(
       "#currUvindex"
     ).textContent = `UV Index: ${currentUvindex}`;
 
-    container.append(address, conditions);
+    container.append(address, conditions, unitToggle);
     app.appendChild(container);
     document.body.appendChild(app);
 
@@ -256,19 +312,6 @@ async function getWeatherCurrent(latitude, longitude, API_KEY) {
   }
 }
 
-//GOOGLE API CALL TO GET CURRENT CITY NAME
-async function getCityName(latitude, longitude, GOOGLE_API_KEY) {
-  let cityName = "";
-  try {
-    const response = await fetch(`
-      https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_API_KEY}`);
-    const cityData = await response.json();
-    cityName = cityData.results[0].address_components[3].long_name;
-  } catch (error) {
-    console.error("Fail to fetch city name:", error);
-  }
-  return cityName;
-}
 window.onload = function () {
   getWeatherSearch("Fairfax", `BVURY5MXKSTGG9XUA7UWYP239`);
 };
